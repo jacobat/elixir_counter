@@ -1,17 +1,17 @@
 defmodule Counter do
   def start_link do
-    Task.start_link(fn -> loop(0) end)
+    Agent.start_link(fn -> 0 end)
   end
 
-  defp loop(count) do
-    receive do
-      {:get, caller} ->
-        send caller, count
-        loop(count)
-      {:increment} ->
-        loop(count + 1)
-      {:decrement} ->
-        loop(count - 1)
-    end
+  def get(counter) do
+    Agent.get(counter, &(&1))
+  end
+
+  def increment(counter) do
+    Agent.update(counter, fn count -> count + 1 end)
+  end
+
+  def decrement(counter) do
+    Agent.update(counter, fn count -> count - 1 end)
   end
 end

@@ -1,32 +1,27 @@
 defmodule CounterTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Counter
 
   test "is zero at first" do
     {:ok, pid} = Counter.start_link
-    send pid, {:get, self()}
-    receive do
-      count -> assert count == 0
-    end
+    assert Counter.get(pid) == 0
   end
 
   test "can be incremented to one" do
     {:ok, pid} = Counter.start_link
-    send pid, {:increment}
-    send pid, {:get, self()}
-    receive do
-      count -> assert count == 1
-    end
+    assert Counter.get(pid) == 0
+
+    Counter.increment(pid)
+    assert Counter.get(pid) == 1
   end
 
   test "can also be decremented" do
     {:ok, pid} = Counter.start_link
-    send pid, {:increment}
-    send pid, {:increment}
-    send pid, {:decrement}
-    send pid, {:get, self()}
-    receive do
-      count -> assert count == 1
-    end
+    assert Counter.get(pid) == 0
+
+    Counter.increment(pid)
+    Counter.increment(pid)
+    Counter.decrement(pid)
+    assert Counter.get(pid) == 1
   end
 end
