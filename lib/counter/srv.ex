@@ -19,7 +19,8 @@ defmodule Counter.Srv do
     {:ok, client} = :gen_tcp.accept(socket)
     Logger.info "New connection on socket"
     {:ok, counter} = Counter.start_link
-    Task.start_link(fn -> serve(client, counter) end)
+    {:ok, pid} = Task.Supervisor.start_child(Counter.TaskSupervisor, fn -> serve(client, counter) end)
+    :ok = :gen_tcp.controlling_process(client, pid)
     Logger.info "Looping"
     loop_acceptor(socket)
   end

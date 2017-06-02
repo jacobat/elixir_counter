@@ -3,6 +3,7 @@ defmodule Counter.Supervisor do
     import Supervisor.Spec
 
     children = [
+      supervisor(Task.Supervisor, [[name: Counter.TaskSupervisor]]),
       worker(Task, [Counter.Srv, :accept, [4040]])
     ]
 
