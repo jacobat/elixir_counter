@@ -12,17 +12,17 @@ defmodule Counter.Srv do
     {:ok, socket} = :gen_tcp.listen(port,
                       [:binary, packet: :line, active: false, reuseaddr: true])
     Logger.info "Accepting connections on port #{port}"
-    loop_acceptor(socket)
+    {:ok, counter} = Counter.start_link
+    loop_acceptor(socket, counter)
   end
 
-  defp loop_acceptor(socket) do
+  defp loop_acceptor(socket, counter) do
     {:ok, client} = :gen_tcp.accept(socket)
     Logger.info "New connection on socket"
-    {:ok, counter} = Counter.start_link
     {:ok, pid} = Task.Supervisor.start_child(Counter.TaskSupervisor, fn -> serve(client, counter) end)
     :ok = :gen_tcp.controlling_process(client, pid)
     Logger.info "Looping"
-    loop_acceptor(socket)
+    loop_acceptor(socket, counter)
   end
 
   defp serve(socket, counter) do
