@@ -41,7 +41,7 @@ defmodule Counter.Srv do
     data
   end
 
-  defp write_line(_line, socket, counter) do
-    :gen_tcp.send(socket, "messages received: #{Counter.get(counter)}")
+  defp write_line(line, socket, counter) do
+    :gen_tcp.send(socket, "messages received: #{Counter.get(counter)} #{line}")
   end
 end
